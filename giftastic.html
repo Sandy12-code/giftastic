@@ -7,71 +7,84 @@
 </head>
 
 <body>
-    <button data-person="happy">Excited Dance</button>
-    <button data-person="sad">crying</button>
-    <button data-person="confused">confused</button>
-    <button data-person="surprised">surprised</button>
-    <button data-person="frustrated">Frustrated</button>
-    <button data-person="tired sleeping">sleeping Baby</button>
-    <div id="gifs-appear-here">
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script type="text/javascript">
 
-        $("button").on("click", function () {
-            var emotions = $(this).attr("data-person");
-            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + emotions + "&api_key=YOEuNMnvdoEBB8qERZGW6hGr8Xt6JVZ2&limit=10&offset=0&rating=G&lang=en";
+    <div class="container">
+        <h1>Emotion Search</h1>
 
-            $.ajax({
-                url: queryURL,
-                method: "GET"
+
+
+        <form id="emotion-form">
+            <label for="emotion-input">Try adding an emotion!</label>
+            <input type="text" id="emotion-input"><br>
+
+            <input id="add-emotion" type="submit" value="Tell me how you feel today!">
+        </form>
+
+        <div id="emotion-view"></div>
+
+        <div id="buttons-view">
+            <button data-person="happy">Excited Dance</button>
+            <button data-person="sad">crying</button>
+            <button data-person="confused">confused</button>
+            <button data-person="surprised">surprised</button>
+            <button data-person="frustrated">Frustrated</button>
+            <button data-person="tired sleeping">sleeping Baby</button>
+        </div>
+
+        <div id="gifs-appear-here">
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+        <script type="text/javascript">
+
+            $("#add-emotion").on("click", function () {
+                event.preventDefault();
+                var userInput = $("#emotion-input").val().trim();
+                var button = $("<button>");
+                button.attr("data-person", userInput);
+                button.text(userInput);
+                $("#buttons-view").append(button);
+            });
+
+
+            $("#gifs-appear-here").on("click", ".gif", function () {
+                var isMoving = $(this).attr("src") == $(this).attr("data-animate");
+                if (isMoving) {
+                    $(this).attr("src", $(this).attr("data-still"));
+                } else {
+                    $(this).attr("src", $(this).attr("data-animate"));
+                }
             })
-                .then(function (response) {
-                    console.log(queryURL);
 
-                    console.log(response);
+            $("#buttons-view").on("click", "button", function () {
+                var emotions = $(this).attr("data-person");
+                var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + emotions + "&api_key=YOEuNMnvdoEBB8qERZGW6hGr8Xt6JVZ2&limit=10&offset=0&rating=G&lang=en";
 
-                    var results = response.data;
-                    for (var i = 0; i < results.length; i++) {
-                        var emotionsDiv = $("<div>");
-                        var p = $("<p>").text("Rating: " + results[i].rating);
-                        var emotionsImage = $("<img>");
-                        emotionsImage.attr("src", results[i].images.fixed_height.url);
-                        emotionsDiv.append(p);
-                        emotionsDiv.append(emotionsImage);
-                        $("#gifs-appear-here").prepend(emotionsDiv);
-                    }
-                });
-        });
-        
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                })
+                    .then(function (response) {
+                        var results = response.data;
+                        for (var i = 0; i < results.length; i++) {
+                            var emotionsDiv = $("<div>");
+                            var p = $("<p>").text("Rating: " + results[i].rating);
+                            var emotionsImage = $("<img>");
+                            emotionsImage.attr("class", 'gif');
+                            emotionsImage.attr("data-animate", results[i].images.fixed_height.url);
+                            emotionsImage.attr("data-still", results[i].images.fixed_height_still.url);
+                            emotionsImage.attr("src", results[i].images.fixed_height.url);
+                            emotionsDiv.append(p);
+                            emotionsDiv.append(emotionsImage);
+                            $("#gifs-appear-here").prepend(emotionsDiv);
+                        }
+                    });
+            });
 
-
-
-
-
-
-
-
-        //   <!-- <img src="https://media.giphy.com/media/BlVnrxJgTGsUw/giphy.gif" data-still="https://media.giphy.com/media/BlVnrxJgTGsUw/giphy.gif" data-animate="https://media.giphy.com/media/BlVnrxJgTGsUw/giphy.gif" data-state="still" class="gif">
-        //   <img src="https://media.giphy.com/media/l1KVaj5UcbHwrBMqI/giphy.gif" data-still="https://media.giphy.com/media/l1KVaj5UcbHwrBMqI/giphy.gif" data-animate="https://media.giphy.com/media/l1KVaj5UcbHwrBMqI/giphy.gif" data-state="still" class="gif">
-        //   <img src="https://media.giphy.com/media/QjIz1AqkGTszK/giphy.gif" data-still="https://media.giphy.com/media/QjIz1AqkGTszK/giphy.gif" data-animate="https://media.giphy.com/media/QjIz1AqkGTszK/giphy.gif" data-still="still" class="gif">
-        //   <img src="https://media.giphy.com/media/lJ0JGfNBrRWJVCRChd/giphy.gif" data-still="https://media.giphy.com/media/lJ0JGfNBrRWJVCRChd/giphy.gif" data-animate="https://media.giphy.com/media/lJ0JGfNBrRWJVCRChd/giphy.gif" data-still="still" class="gif">
-        //   <img src="https://media.giphy.com/media/uDRezGbZW1uo0/giphy.gif" data-still="https://media.giphy.com/media/uDRezGbZW1uo0/giphy.gif" data-animate="https://media.giphy.com/media/uDRezGbZW1uo0/giphy.gif" data-still="still" class="gif">
-        //   <img src="https://media.giphy.com/media/xT8qBvH1pAhtfSx52U/giphy.gif" data-still="https://media.giphy.com/media/xT8qBvH1pAhtfSx52U/giphy.gif" data-animate="https://media.giphy.com/media/xT8qBvH1pAhtfSx52U/giphy.gif" data-still="still" class="gif">
-        
-
-// $(".gif").on("click", function() {
-//     var state = $(this).attr("data-state");
-//     if (state==="still") {
-//         $(this).attr("src", $(this).attr("data-animate"));
-//         $(this).attr("data-state", "animate");
-//       } else {
-//         $(this).attr("src", $(this).attr("data-still"));
-//         $(this).attr("data-state", "still");
-//       }
-//     }); -->
-
-    </script>
+        </script>
+    </div>
 </body>
 
 </html>
