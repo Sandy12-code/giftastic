@@ -20,7 +20,8 @@
 
         $("button").on("click", function () {
             var emotions = $(this).attr("data-person");
-            var queryURL = "https://api.giphy.com/v1/gifs/search?=" + emotions + "api_key=YOEuNMnvdoEBB8qERZGW6hGr8Xt6JVZ2&q=emotions&limit=10&offset=0&rating=G&lang=en";
+            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + emotions + "&api_key=YOEuNMnvdoEBB8qERZGW6hGr8Xt6JVZ2&limit=10&offset=0&rating=G&lang=en";
+
             $.ajax({
                 url: queryURL,
                 method: "GET"
@@ -30,7 +31,7 @@
 
                     console.log(response);
 
-                    var results = respnse.data;
+                    var results = response.data;
                     for (var i = 0; i < results.length; i++) {
                         var emotionsDiv = $("<div>");
                         var p = $("<p>").text("Rating: " + results[i].rating);
